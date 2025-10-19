@@ -18,7 +18,7 @@ describe("GET /about", () => {
       data: {
         nombreCompleto: "Sleiman José Orocua Moujalli",
         cedula: "31442700",
-        seccion: "02",
+        seccion: "023",
       },
     });
   });
