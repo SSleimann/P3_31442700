@@ -2,9 +2,15 @@ const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger/index");
 
+const db = require("./config/database");
+const userRoutes = require("./routes/users");
+
 const app = express();
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(express.json());
+
+app.use("/users", userRoutes);
 
 /**
  * @swagger
@@ -40,7 +46,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *                       description: The developer's section.
  *                       example: "02"
  */
-app.get("/about", function (req, res) {
+app.get("/about", async (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
@@ -66,8 +72,56 @@ app.get("/about", function (req, res) {
  *               type: string
  *               example: ""
  */
-app.get("/ping", (req, res) => {
+app.get("/ping", async (req, res) => {
   res.status(200).send("");
+});
+
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Database health check endpoint.
+ *     description: Checks the database connection status.
+ *     responses:
+ *       200:
+ *         description: Database is connected.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: Response status.
+ *                   example: ok
+ *                 database:
+ *                   type: string
+ *                   description: Database connection status.
+ *                   example: connected
+ *       500:
+ *         description: Database is disconnected.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: Response status.
+ *                   example: error
+ *                 database:
+ *                   type: string
+ *                   description: Database connection status.
+ *                   example: disconnected
+ */
+app.get("/health", async (req, res) => {
+  try {
+    await db.authenticate();
+
+    res.status(200).json({ status: "ok", database: "connected" });
+  } catch {
+    res.status(500).json({ status: "error", database: "disconnected" });
+  }
 });
 
 module.exports = app;
