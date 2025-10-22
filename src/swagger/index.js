@@ -7,6 +7,15 @@ const swaggerDocument = {
     version: "1.0.0",
     description: "API documentation for the project",
   },
+  components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
 };
 
 const options = {
