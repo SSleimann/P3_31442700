@@ -1,6 +1,6 @@
 const User = require("../models/user");
 
-const bcrypt = require("bcrypt");
+const { hashPassword } = require("../utils/password");
 
 const getUsers = async (req, res) => {
   try {
@@ -82,13 +82,11 @@ const createUser = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = await User.create({
       first_name: firstName,
       last_name: lastName,
       email,
-      password: hashedPassword,
+      password: await hashPassword(password),
     });
     const userJSON = newUser.toJSON();
     delete userJSON.password;
