@@ -19,6 +19,8 @@ router.use(authenticateToken);
  *     summary: Get all users
  *     description: Retrieves a list of all users with sensitive information (passwords) removed
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved users
@@ -74,6 +76,8 @@ router.get("/", getUsers);
  *     summary: Get user by ID
  *     description: Retrieves a specific user by their ID with sensitive information removed
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -135,6 +139,8 @@ router.get("/:id", getUserById);
  *     summary: Create a new user
  *     description: Creates a new user with the provided information. The password will be hashed before storing.
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -259,6 +265,8 @@ router.post("/", createUser);
  *     summary: Update a user
  *     description: Updates an existing user with the provided information. Only provided fields will be updated.
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -398,6 +406,8 @@ router.put("/:id", updateUser);
  *     summary: Delete a user
  *     description: Deletes a specific user by their ID
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
