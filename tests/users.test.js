@@ -1,12 +1,26 @@
 // users.test.js
 const request = require("supertest");
 const app = require("../src/app");
-
 const User = require("../src/models/user");
+
+jest.mock("../src/middleware/auth");
+const mockAuth = require("../src/middleware/auth");
 
 describe("GET /users", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+    mockAuth.mockImplementation((req, res, next) => {
+      next();
+    });
     return User.destroy({ where: {} });
+  });
+
+  it("should return 401 if user is not authenticated", async () => {
+    mockAuth.mockImplementation((req, res, next) => {
+      return res.status(401).json({});
+    });
+    const res = await request(app).get("/users").expect(401);
+    expect(res.body).toEqual({});
   });
 
   it("should return all users with status 200", async () => {
@@ -43,6 +57,21 @@ describe("GET /users", () => {
 });
 
 describe("GET /users/:id", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockAuth.mockImplementation((req, res, next) => {
+      next();
+    });
+  });
+
+  it("should return 401 if user is not authenticated", async () => {
+    mockAuth.mockImplementation((req, res, next) => {
+      return res.status(401).json({});
+    });
+    const res = await request(app).get("/users/some-id").expect(401);
+    expect(res.body).toEqual({});
+  });
+
   it("should return a specific user by id with status 200", async () => {
     const user = await User.create({
       first_name: "Jane",
@@ -88,7 +117,19 @@ describe("GET /users/:id", () => {
 
 describe("POST /users", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+    mockAuth.mockImplementation((req, res, next) => {
+      next();
+    });
     return User.destroy({ where: {} });
+  });
+
+  it("should return 401 if user is not authenticated", async () => {
+    mockAuth.mockImplementation((req, res, next) => {
+      return res.status(401).json({});
+    });
+    const res = await request(app).post("/users").expect(401);
+    expect(res.body).toEqual({});
   });
 
   it("should create a new user with status 201", async () => {
@@ -177,7 +218,19 @@ describe("POST /users", () => {
 
 describe("PUT /users/:id", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+    mockAuth.mockImplementation((req, res, next) => {
+      next();
+    });
     return User.destroy({ where: {} });
+  });
+
+  it("should return 401 if user is not authenticated", async () => {
+    mockAuth.mockImplementation((req, res, next) => {
+      return res.status(401).json({});
+    });
+    const res = await request(app).put("/users/some-id").expect(401);
+    expect(res.body).toEqual({});
   });
 
   it("should update an existing user with status 200", async () => {
@@ -323,6 +376,22 @@ describe("PUT /users/:id", () => {
 });
 
 describe("DELETE /users/:id", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockAuth.mockImplementation((req, res, next) => {
+      next();
+    });
+    return User.destroy({ where: {} });
+  });
+
+  it("should return 401 if user is not authenticated", async () => {
+    mockAuth.mockImplementation((req, res, next) => {
+      return res.status(401).json({});
+    });
+    const res = await request(app).delete("/users/some-id").expect(401);
+    expect(res.body).toEqual({});
+  });
+
   it("should delete an existing user with status 200", async () => {
     const user = await User.create({
       first_name: "Eve",

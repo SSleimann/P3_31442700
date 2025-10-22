@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const authenticateToken = require("../middleware/auth");
 
 const {
   getUsers,
@@ -8,6 +8,9 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/users");
+
+const router = express.Router();
+router.use(authenticateToken);
 
 /**
  * @swagger
