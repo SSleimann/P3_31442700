@@ -28,13 +28,26 @@ const {
  *                   type: string
  *                   example: success
  *                 data:
- *                   type: object
- *                   properties:
- *                     sanitizedUsers:
- *                       type: array
- *                       items:
- *                         type: object
- *                         description: User object without password field
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         format: uuid
+ *                       first_name:
+ *                         type: string
+ *                       last_name:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                         format: email
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
  *       500:
  *         description: Internal server error
  *         content:
