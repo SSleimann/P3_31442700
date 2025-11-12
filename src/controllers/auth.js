@@ -1,6 +1,7 @@
-const User = require("../models/user");
-const { hashPassword, checkPassword } = require("../utils/password");
-const jwt = require("jsonwebtoken");
+import User from "../models/user";
+import jwt from "jsonwebtoken";
+
+import { hashPassword, checkPassword } from "../utils/password";
 
 const registerUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;

@@ -1,6 +1,6 @@
-const User = require("../models/user");
+import User from "../models/user";
 
-const { hashPassword } = require("../utils/password");
+import { hashPassword } from "../utils/password";
 
 const getUsers = async (req, res) => {
   try {

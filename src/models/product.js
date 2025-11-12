@@ -1,6 +1,6 @@
-const { DataTypes } = require("sequelize");
-const db = require("../config/database");
-const slugify = require("slugify");
+import db from "../config/database.js";
+import { DataTypes } from "sequelize";
+import slugify from "slugify";
 
 const Product = db.define(
   "product",
@@ -67,4 +67,4 @@ const Product = db.define(
   }
 );
 
-module.exports = Product;
+export default Product;

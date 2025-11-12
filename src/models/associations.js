@@ -1,6 +1,6 @@
-const Category = require("./category");
-const Product = require("./product");
-const Tag = require("./tag");
+import Category from "./category.js";
+import Product from "./product.js";
+import Tag from "./tag.js";
 
 let associationsInitialized = false;
 

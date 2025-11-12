@@ -1,13 +1,14 @@
-const express = require("express");
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./swagger/index");
+import express from "express";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./swagger/index.js";
 
-const db = require("./config/database");
-const setupAssociations = require("./models/associations");
-const userRoute = require("./routes/users");
-const authRoute = require("./routes/auth");
+import db from "./config/database.js";
+import setupAssociations from "./models/associations.js";
+import userRoute from "./routes/users.js";
+import authRoute from "./routes/auth.js";
 
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 
@@ -131,4 +132,4 @@ app.get("/health", async (req, res) => {
   }
 });
 
-module.exports = app;
+export default app;
