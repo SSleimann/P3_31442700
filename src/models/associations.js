@@ -2,7 +2,12 @@ const Category = require("./category");
 const Product = require("./product");
 const Tag = require("./tag");
 
+let associationsInitialized = false;
+
 function setupAssociations() {
+  if (associationsInitialized) return;
+  associationsInitialized = true;
+
   // One to many: Category has many Products
   Category.hasMany(Product, {
     foreignKey: "categoryId",
