@@ -22,12 +22,12 @@ function setupAssociations() {
   // Many to many: Product belongs to many Tags
   Product.belongsToMany(Tag, {
     through: "ProductTags",
-    as: "tags",
+    as: "productTags",
     foreignKey: "productId",
   });
   Tag.belongsToMany(Product, {
     through: "ProductTags",
-    as: "products",
+    as: "tagProducts",
     foreignKey: "tagId",
   });
 }
