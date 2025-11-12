@@ -1,6 +1,6 @@
-import User from "../models/user";
+import User from "../models/user.js";
 
-import { hashPassword } from "../utils/password";
+import { hashPassword } from "../utils/password.js";
 
 const getUsers = async (req, res) => {
   try {
