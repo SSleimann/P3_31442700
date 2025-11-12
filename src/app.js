@@ -3,12 +3,15 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger/index");
 
 const db = require("./config/database");
+const setupAssociations = require("./models/associations");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 
 require("dotenv").config();
 
 const app = express();
+
+setupAssociations();
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
