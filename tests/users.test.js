@@ -1,10 +1,11 @@
 // users.test.js
-const request = require("supertest");
-const app = require("../src/app");
-const User = require("../src/models/user");
+import request from "supertest";
+import app from "../src/app.js";
+import User from "../src/models/user.js";
 
 jest.mock("../src/middleware/auth");
-const mockAuth = require("../src/middleware/auth");
+
+import mockAuth from "../src/middleware/auth";
 
 describe("GET /users", () => {
   beforeEach(() => {

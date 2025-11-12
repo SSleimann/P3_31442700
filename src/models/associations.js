@@ -32,4 +32,4 @@ function setupAssociations() {
   });
 }
 
-module.exports = setupAssociations;
+export default setupAssociations;

@@ -1,10 +1,10 @@
 // auth.test.js
-const request = require("supertest");
-const app = require("../src/app");
+import request from "supertest";
+import app from "../src/app.js";
 
-const User = require("../src/models/user");
-const jwt = require("jsonwebtoken");
-const { hashPassword } = require("../src/utils/password");
+import User from "../src/models/user.js";
+import jwt from "jsonwebtoken";
+import { hashPassword } from "../src/utils/password.js";
 
 describe("POST /auth/register", () => {
   beforeEach(() => {

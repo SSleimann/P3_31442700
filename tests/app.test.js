@@ -1,6 +1,6 @@
 // app.test.js
-const request = require("supertest");
-const app = require("../src/app");
+import request from "supertest";
+import app from "../src/app.js";
 
 describe("GET /ping", () => {
   it("should answer with an empty response and status 200", async () => {

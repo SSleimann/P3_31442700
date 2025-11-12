@@ -1,8 +1,8 @@
-const request = require("supertest");
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const User = require("../src/models/user");
-const authenticateToken = require("../src/middleware/auth");
+import request from "supertest";
+import express from "express";
+import jwt from "jsonwebtoken";
+import User from "../src/models/user.js";
+import authenticateToken from "../src/middleware/auth.js";
 
 jest.mock("jsonwebtoken");
 jest.mock("../src/models/user");

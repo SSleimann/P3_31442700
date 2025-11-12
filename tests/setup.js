@@ -1,6 +1,8 @@
-const sequelize = require("../src/config/database");
+import sequelize from "../src/config/database.js";
+import setupAssociations from "../src/models/associations.js";
 
 beforeAll(async () => {
+  setupAssociations();
   await sequelize.sync({ force: true });
 });
 
