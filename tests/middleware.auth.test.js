@@ -1,11 +1,24 @@
+import { jest } from "@jest/globals";
 import request from "supertest";
 import express from "express";
-import jwt from "jsonwebtoken";
-import User from "../src/models/user.js";
-import authenticateToken from "../src/middleware/auth.js";
 
-jest.mock("jsonwebtoken");
-jest.mock("../src/models/user");
+const _verifyMock = jest.fn();
+jest.unstable_mockModule("jsonwebtoken", () => ({
+  verify: _verifyMock,
+  default: { verify: _verifyMock },
+}));
+
+jest.unstable_mockModule("../src/models/user.js", () => ({
+  default: {
+    findByPk: jest.fn(),
+  },
+}));
+
+const User = await import("../src/models/user.js");
+const jwt = await import("jsonwebtoken");
+const { default: authenticateToken } = await import(
+  "../src/middleware/auth.js"
+);
 
 const app = express();
 app.use("/protected", authenticateToken, (req, res) => {
@@ -46,21 +59,22 @@ describe("authenticateToken middleware", () => {
     jwt.verify.mockImplementation((token, secret, callback) => {
       callback(null, { sub: "user-id" });
     });
-    User.findByPk.mockResolvedValue(null);
+    User.default.findByPk.mockResolvedValue(null);
 
     const response = await request(app)
       .get("/protected")
       .set("Authorization", "Bearer valid-token");
 
     expect(response.status).toBe(403);
-    expect(User.findByPk).toHaveBeenCalledWith("user-id");
+
+    expect(User.default.findByPk).toHaveBeenCalledWith("user-id");
   });
 
   it("should return 500 when database query fails", async () => {
     jwt.verify.mockImplementation((token, secret, callback) => {
       callback(null, { sub: "user-id" });
     });
-    User.findByPk.mockRejectedValue(new Error("Database error"));
+    User.default.findByPk.mockRejectedValue(new Error("Database error"));
 
     const response = await request(app)
       .get("/protected")
@@ -74,7 +88,7 @@ describe("authenticateToken middleware", () => {
     jwt.verify.mockImplementation((token, secret, callback) => {
       callback(null, { sub: "user-id" });
     });
-    User.findByPk.mockResolvedValue(mockUser);
+    User.default.findByPk.mockResolvedValue(mockUser);
 
     const response = await request(app)
       .get("/protected")
