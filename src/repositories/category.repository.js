@@ -26,6 +26,11 @@ class CategoryRepository {
     }
     return category;
   }
+
+  async filterCategories(criteria) {
+    const categories = await Category.findAll({ where: criteria });
+    return categories;
+  }
 }
 
 export default CategoryRepository;

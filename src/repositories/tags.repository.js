@@ -26,6 +26,11 @@ class TagRepository {
     }
     return tag;
   }
+
+  async filterTags(criteria) {
+    const tags = await Tag.findAll({ where: criteria });
+    return tags;
+  }
 }
 
 export default TagRepository;

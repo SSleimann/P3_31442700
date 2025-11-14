@@ -6,8 +6,10 @@ import db from "./config/database.js";
 import setupAssociations from "./models/associations.js";
 import userRoute from "./routes/users.js";
 import authRoute from "./routes/auth.js";
+import categoryRoute from "./routes/categories.js";
 
 import dotenv from "dotenv";
+
 dotenv.config();
 
 const app = express();
@@ -19,6 +21,7 @@ app.use(express.json());
 
 app.use("/users", userRoute);
 app.use("/auth", authRoute);
+app.use("/categories", categoryRoute);
 
 /**
  * @swagger
