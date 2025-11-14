@@ -1,24 +1,26 @@
-import { jest } from "@jest/globals";
-
-jest.unstable_mockModule("../src/models/category.js", () => ({
-  default: {
-    create: jest.fn(),
-    findByPk: jest.fn(),
-  },
-}));
+import { expect, it, describe, beforeEach, vi } from "vitest";
 
 import { v4 as uuidv4 } from "uuid";
-const Category = await import("../src/models/category.js");
-const { default: CategoryRepository } = await import(
-  "../src/repositories/category.repository.js"
-);
+
+import Category from "../src/models/category.js";
+import CategoryRepository from "../src/repositories/category.repository.js";
+
+vi.mock("../src/models/category.js", () => {
+  return {
+    default: {
+      create: vi.fn(),
+      findByPk: vi.fn(),
+    },
+  };
+});
 
 describe("CategoryRepository", () => {
   let categoryRepository;
 
   beforeEach(() => {
     categoryRepository = new CategoryRepository();
-    jest.clearAllMocks();
+    vi.mocked(Category.create).mockReset();
+    vi.mocked(Category.findByPk).mockReset();
   });
 
   it("createCategory should create a new category", async () => {
@@ -27,9 +29,9 @@ describe("CategoryRepository", () => {
       description: "Electronic items",
     };
     const mockCategory = { id: uuidv4(), ...categoryData };
-    Category.default.create.mockResolvedValue(mockCategory);
+    Category.create.mockResolvedValue(mockCategory);
     const category = await categoryRepository.createCategory(categoryData);
-    expect(Category.default.create).toHaveBeenCalledWith(categoryData);
+    expect(Category.create).toHaveBeenCalledWith(categoryData);
     expect(category).toEqual(mockCategory);
   });
 
@@ -40,9 +42,9 @@ describe("CategoryRepository", () => {
       name: "Books",
       description: "All kinds of books",
     };
-    Category.default.findByPk.mockResolvedValue(mockCategory);
+    Category.findByPk.mockResolvedValue(mockCategory);
     const category = await categoryRepository.getCategoryById(categoryId);
-    expect(Category.default.findByPk).toHaveBeenCalledWith(categoryId);
+    expect(Category.findByPk).toHaveBeenCalledWith(categoryId);
     expect(category).toEqual(mockCategory);
   });
 
@@ -52,10 +54,10 @@ describe("CategoryRepository", () => {
       id: categoryId,
       name: "Clothing",
       description: "Apparel and garments",
-      update: jest.fn(),
+      update: vi.fn(),
     };
 
-    Category.default.findByPk.mockResolvedValue(existingCategory);
+    Category.findByPk.mockResolvedValue(existingCategory);
     const updatedData = {
       name: "Updated Clothing",
       description: "Updated description",
@@ -66,7 +68,7 @@ describe("CategoryRepository", () => {
       updatedData
     );
 
-    expect(Category.default.findByPk).toHaveBeenCalledWith(categoryId);
+    expect(Category.findByPk).toHaveBeenCalledWith(categoryId);
     expect(existingCategory.update).toHaveBeenCalledWith(updatedData);
     expect(category).toEqual(existingCategory);
   });
@@ -77,13 +79,13 @@ describe("CategoryRepository", () => {
       id: categoryId,
       name: "Toys",
       description: "Children toys",
-      destroy: jest.fn(),
+      destroy: vi.fn(),
     };
-    Category.default.findByPk.mockResolvedValue(existingCategory);
+    Category.findByPk.mockResolvedValue(existingCategory);
 
     const category = await categoryRepository.deleteCategory(categoryId);
 
-    expect(Category.default.findByPk).toHaveBeenCalledWith(categoryId);
+    expect(Category.findByPk).toHaveBeenCalledWith(categoryId);
     expect(existingCategory.destroy).toHaveBeenCalled();
     expect(category).toEqual(existingCategory);
   });

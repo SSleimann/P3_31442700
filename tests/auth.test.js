@@ -1,4 +1,5 @@
 // auth.test.js
+import { expect, it, describe, beforeEach } from "vitest";
 import request from "supertest";
 import app from "../src/app.js";
 

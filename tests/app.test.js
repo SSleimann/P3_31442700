@@ -1,4 +1,5 @@
 // app.test.js
+import { expect, it, describe } from "vitest";
 import request from "supertest";
 import app from "../src/app.js";
 

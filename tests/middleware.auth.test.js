@@ -1,24 +1,20 @@
-import { jest } from "@jest/globals";
+import { vi, describe, it, expect, beforeEach } from "vitest";
 import request from "supertest";
 import express from "express";
+import User from "../src/models/user.js";
+import jwt from "jsonwebtoken";
+import authenticateToken from "../src/middleware/auth.js";
 
-const _verifyMock = jest.fn();
-jest.unstable_mockModule("jsonwebtoken", () => ({
-  verify: _verifyMock,
-  default: { verify: _verifyMock },
-}));
+vi.mock("jsonwebtoken", () => {
+  const verify = vi.fn();
+  return { verify, default: { verify } };
+});
 
-jest.unstable_mockModule("../src/models/user.js", () => ({
+vi.mock("../src/models/user.js", () => ({
   default: {
-    findByPk: jest.fn(),
+    findByPk: vi.fn(),
   },
 }));
-
-const User = await import("../src/models/user.js");
-const jwt = await import("jsonwebtoken");
-const { default: authenticateToken } = await import(
-  "../src/middleware/auth.js"
-);
 
 const app = express();
 app.use("/protected", authenticateToken, (req, res) => {
@@ -27,7 +23,7 @@ app.use("/protected", authenticateToken, (req, res) => {
 
 describe("authenticateToken middleware", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.mocked(jwt.verify).mockReset();
     process.env.JWT_SECRET = "test-secret";
   });
 
@@ -59,7 +55,7 @@ describe("authenticateToken middleware", () => {
     jwt.verify.mockImplementation((token, secret, callback) => {
       callback(null, { sub: "user-id" });
     });
-    User.default.findByPk.mockResolvedValue(null);
+    User.findByPk.mockResolvedValue(null);
 
     const response = await request(app)
       .get("/protected")
@@ -67,14 +63,14 @@ describe("authenticateToken middleware", () => {
 
     expect(response.status).toBe(403);
 
-    expect(User.default.findByPk).toHaveBeenCalledWith("user-id");
+    expect(User.findByPk).toHaveBeenCalledWith("user-id");
   });
 
   it("should return 500 when database query fails", async () => {
     jwt.verify.mockImplementation((token, secret, callback) => {
       callback(null, { sub: "user-id" });
     });
-    User.default.findByPk.mockRejectedValue(new Error("Database error"));
+    User.findByPk.mockRejectedValue(new Error("Database error"));
 
     const response = await request(app)
       .get("/protected")
@@ -88,7 +84,7 @@ describe("authenticateToken middleware", () => {
     jwt.verify.mockImplementation((token, secret, callback) => {
       callback(null, { sub: "user-id" });
     });
-    User.default.findByPk.mockResolvedValue(mockUser);
+    User.findByPk.mockResolvedValue(mockUser);
 
     const response = await request(app)
       .get("/protected")

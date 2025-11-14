@@ -1,15 +1,14 @@
 // users.test.js
-import { jest } from "@jest/globals";
+import { vi, describe, it, beforeEach, expect } from "vitest";
 import request from "supertest";
 
-jest.unstable_mockModule("../src/middleware/auth.js", () => ({
-  default: jest.fn(),
+import app from "../src/app.js";
+import User from "../src/models/user.js";
+import mockAuth from "../src/middleware/auth.js";
+
+vi.mock("../src/middleware/auth.js", () => ({
+  default: vi.fn(),
 }));
-
-const { default: app } = await import("../src/app.js");
-const { default: User } = await import("../src/models/user.js");
-
-const mockAuth = await import("../src/middleware/auth.js");
 
 describe("GET /users", () => {
   beforeEach(async () => {
@@ -17,7 +16,7 @@ describe("GET /users", () => {
   });
 
   it("should return 401 if user is not authenticated", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       return res.status(401).json({});
     });
     const res = await request(app).get("/users").expect(401);
@@ -25,7 +24,7 @@ describe("GET /users", () => {
   });
 
   it("should return all users with status 200", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     await User.create({
@@ -52,7 +51,7 @@ describe("GET /users", () => {
   });
 
   it("should handle empty users list", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app).get("/users").expect(200);
@@ -65,12 +64,11 @@ describe("GET /users", () => {
 
 describe("GET /users/:id", () => {
   beforeEach(async () => {
-    jest.clearAllMocks();
     await User.destroy({ where: {} });
   });
 
   it("should return 401 if user is not authenticated", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       return res.status(401).json({});
     });
     const res = await request(app).get("/users/some-id").expect(401);
@@ -78,7 +76,7 @@ describe("GET /users/:id", () => {
   });
 
   it("should return a specific user by id with status 200", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const user = await User.create({
@@ -105,7 +103,7 @@ describe("GET /users/:id", () => {
   });
 
   it("should return 404 when user is not found", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app)
@@ -118,7 +116,7 @@ describe("GET /users/:id", () => {
   });
 
   it("should return 400 for invalid user id format", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app).get("/users/invalid-id").expect(400);
@@ -131,12 +129,11 @@ describe("GET /users/:id", () => {
 
 describe("POST /users", () => {
   beforeEach(async () => {
-    jest.clearAllMocks();
     await User.destroy({ where: {} });
   });
 
   it("should return 401 if user is not authenticated", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       return res.status(401).json({});
     });
     const res = await request(app).post("/users").expect(401);
@@ -144,7 +141,7 @@ describe("POST /users", () => {
   });
 
   it("should create a new user with status 201", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app)
@@ -180,7 +177,7 @@ describe("POST /users", () => {
   });
 
   it("should return 400 when required fields are missing", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app)
@@ -193,7 +190,7 @@ describe("POST /users", () => {
   });
 
   it("should return 400 when email format is invalid", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app)
@@ -213,7 +210,7 @@ describe("POST /users", () => {
   });
 
   it("should return 409 when email already exists", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     await User.create({
@@ -241,12 +238,11 @@ describe("POST /users", () => {
 
 describe("PUT /users/:id", () => {
   beforeEach(async () => {
-    jest.clearAllMocks();
     await User.destroy({ where: {} });
   });
 
   it("should return 401 if user is not authenticated", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       return res.status(401).json({});
     });
     const res = await request(app).put("/users/some-id").expect(401);
@@ -254,7 +250,7 @@ describe("PUT /users/:id", () => {
   });
 
   it("should update an existing user with status 200", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const user = await User.create({
@@ -291,7 +287,7 @@ describe("PUT /users/:id", () => {
   });
 
   it("should return 404 when user to update is not found", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app)
@@ -310,7 +306,7 @@ describe("PUT /users/:id", () => {
   });
 
   it("should return 400 when missing required fields", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const user = await User.create({
@@ -335,7 +331,7 @@ describe("PUT /users/:id", () => {
   });
 
   it("should return 400 when email format is invalid", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const user = await User.create({
@@ -361,7 +357,7 @@ describe("PUT /users/:id", () => {
   });
 
   it("should return 400 for invalid user id format", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app)
@@ -380,7 +376,7 @@ describe("PUT /users/:id", () => {
   });
 
   it("should return 409 when updating to an existing email", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     await User.create({
@@ -415,12 +411,11 @@ describe("PUT /users/:id", () => {
 
 describe("DELETE /users/:id", () => {
   beforeEach(async () => {
-    jest.clearAllMocks();
     await User.destroy({ where: {} });
   });
 
   it("should return 401 if user is not authenticated", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       return res.status(401).json({});
     });
     const res = await request(app).delete("/users/some-id").expect(401);
@@ -428,7 +423,7 @@ describe("DELETE /users/:id", () => {
   });
 
   it("should delete an existing user with status 200", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const user = await User.create({
@@ -448,7 +443,7 @@ describe("DELETE /users/:id", () => {
   });
 
   it("should return 404 when user to delete is not found", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app)
@@ -462,7 +457,7 @@ describe("DELETE /users/:id", () => {
   });
 
   it("should return 400 for invalid user id format", async () => {
-    mockAuth.default.mockImplementation((req, res, next) => {
+    mockAuth.mockImplementation((req, res, next) => {
       next();
     });
     const res = await request(app)

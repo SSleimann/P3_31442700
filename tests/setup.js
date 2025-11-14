@@ -1,3 +1,4 @@
+import { beforeAll, afterAll } from "vitest";
 import sequelize from "../src/config/database.js";
 import setupAssociations from "../src/models/associations.js";
 
