@@ -1,7 +1,8 @@
 import CategoryRepository from "../repositories/category.repository.js";
 
+const repo = new CategoryRepository();
+
 const getAllCategories = async (req, res) => {
-  const repo = new CategoryRepository();
   try {
     const categories = await repo.filterCategories({});
 
@@ -20,7 +21,6 @@ const getAllCategories = async (req, res) => {
 
 const getCategoryById = async (req, res) => {
   const { id } = req.params;
-  const repo = new CategoryRepository();
   try {
     const category = await repo.getCategoryById(id);
     if (!category) {
@@ -44,7 +44,14 @@ const getCategoryById = async (req, res) => {
 
 const createCategory = async (req, res) => {
   const { name, description } = req.body;
-  const repo = new CategoryRepository();
+
+  if (!name || !description) {
+    return res.status(400).json({
+      status: "error",
+      message: "Name and description are required",
+    });
+  }
+
   try {
     const newCategory = await repo.createCategory({
       name,
@@ -66,7 +73,14 @@ const createCategory = async (req, res) => {
 const updateCategory = async (req, res) => {
   const { id } = req.params;
   const { name, description } = req.body;
-  const repo = new CategoryRepository();
+
+  if (!name || !description) {
+    return res.status(400).json({
+      status: "error",
+      message: "Name and description are required",
+    });
+  }
+
   try {
     const updatedCategory = await repo.updateCategory(id, {
       name,
@@ -95,7 +109,7 @@ const updateCategory = async (req, res) => {
 
 const deleteCategory = async (req, res) => {
   const { id } = req.params;
-  const repo = new CategoryRepository();
+
   try {
     const deletedCategory = await repo.deleteCategory(id);
 
