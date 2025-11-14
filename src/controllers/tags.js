@@ -1,8 +1,9 @@
 import TagRepository from "../repositories/tags.repository.js";
 
+const repo = new TagRepository();
+
 const getAllTags = async (req, res) => {
   try {
-    const repo = new TagRepository();
     const tags = await repo.filterTags({});
     return res.status(200).json({
       status: "success",
@@ -19,7 +20,7 @@ const getAllTags = async (req, res) => {
 
 const getTagById = async (req, res) => {
   const { id } = req.params;
-  const repo = new TagRepository();
+
   try {
     const tag = await repo.getTagById(id);
     if (!tag) {
@@ -43,7 +44,14 @@ const getTagById = async (req, res) => {
 
 const createTag = async (req, res) => {
   const { name } = req.body;
-  const repo = new TagRepository();
+
+  if (!name) {
+    return res.status(400).json({
+      status: "error",
+      message: "Name is required",
+    });
+  }
+
   try {
     const newTag = await repo.createTag({
       name,
@@ -64,7 +72,13 @@ const createTag = async (req, res) => {
 const updateTag = async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
-  const repo = new TagRepository();
+
+  if (!name) {
+    return res.status(400).json({
+      status: "error",
+      message: "Name is required",
+    });
+  }
 
   try {
     const updatedTag = await repo.updateTag(id, {
@@ -92,7 +106,6 @@ const updateTag = async (req, res) => {
 
 const deleteTag = async (req, res) => {
   const { id } = req.params;
-  const repo = new TagRepository();
 
   try {
     const deletedTag = await repo.deleteTag(id);
