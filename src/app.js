@@ -7,6 +7,7 @@ import setupAssociations from "./models/associations.js";
 import userRoute from "./routes/users.js";
 import authRoute from "./routes/auth.js";
 import categoryRoute from "./routes/categories.js";
+import tagRoute from "./routes/tags.js";
 
 import dotenv from "dotenv";
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/users", userRoute);
 app.use("/auth", authRoute);
 app.use("/categories", categoryRoute);
+app.use("/tags", tagRoute);
 
 /**
  * @swagger
