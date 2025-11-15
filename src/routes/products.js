@@ -6,6 +6,7 @@ import {
   deleteProduct,
   autoHealingGetProduct,
 } from "../controllers/products.js";
+import authenticateToken from "../middleware/auth.js";
 import express from "express";
 const router = express.Router();
 
@@ -85,7 +86,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/", createProduct);
+router.post("/", authenticateToken, createProduct);
 
 /**
  * @swagger
@@ -253,7 +254,7 @@ router.get("/", filterProducts);
  *       500:
  *         description: Internal server error
  */
-router.get("/:id", getProduct);
+router.get("/:id", authenticateToken, getProduct);
 
 /**
  * @swagger
@@ -335,7 +336,7 @@ router.get("/:id", getProduct);
  *       500:
  *         description: Internal server error
  */
-router.put("/:id", updateProduct);
+router.put("/:id", authenticateToken, updateProduct);
 
 /**
  * @swagger
@@ -368,7 +369,7 @@ router.put("/:id", updateProduct);
  *       500:
  *         description: Internal server error
  */
-router.delete("/:id", deleteProduct);
+router.delete("/:id", authenticateToken, deleteProduct);
 
 /**
  * @swagger
