@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: test_jwt_secret
     strategy:
       matrix:
         node-version: ["18.x", "20.x"]
