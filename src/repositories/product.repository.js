@@ -1,5 +1,7 @@
 import Product from "../models/product.js";
 
+import QueryBuilder from "../utils/query.js";
+
 class ProductRepository {
   async createProduct(data) {
     const product = await Product.create(data);
@@ -29,9 +31,23 @@ class ProductRepository {
     return product;
   }
 
-  async filterProducts(criteria) {
-    const products = await Product.findAll({ where: criteria });
-    return products;
+  async filterProducts(criteria = {}, options = {}) {
+    const {
+      paginate = true,
+      maxLimit = 20,
+      sort = true,
+      filterFields = [],
+    } = options;
+
+    const queryBuilder = new QueryBuilder(Product, criteria);
+
+    if (paginate) queryBuilder.paginate(maxLimit);
+    if (sort) queryBuilder.sort();
+
+    queryBuilder.textSearch();
+    queryBuilder.filter(filterFields);
+
+    return await queryBuilder.exec();
   }
 }
 

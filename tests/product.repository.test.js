@@ -90,14 +90,22 @@ describe("ProductRepository", () => {
 
   it("filterProducts should return products that match criteria", async () => {
     const criteria = { price: 10 };
+    const options = {
+      filterFields: ["price"],
+    };
+
     const mockProducts = [
       { id: uuidv4(), name: "P1", price: 10 },
       { id: uuidv4(), name: "P2", price: 10 },
     ];
     Product.findAll.mockResolvedValue(mockProducts);
 
-    const products = await productRepository.filterProducts(criteria);
-    expect(Product.findAll).toHaveBeenCalledWith({ where: criteria });
+    const products = await productRepository.filterProducts(criteria, options);
+    expect(Product.findAll).toHaveBeenCalledWith({
+      where: criteria,
+      limit: 10,
+      offset: 0,
+    });
     expect(products).toEqual(mockProducts);
   });
 });
