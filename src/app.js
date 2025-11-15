@@ -8,6 +8,7 @@ import userRoute from "./routes/users.js";
 import authRoute from "./routes/auth.js";
 import categoryRoute from "./routes/categories.js";
 import tagRoute from "./routes/tags.js";
+import productRoute from "./routes/products.js";
 
 import dotenv from "dotenv";
 
@@ -24,6 +25,7 @@ app.use("/users", userRoute);
 app.use("/auth", authRoute);
 app.use("/categories", categoryRoute);
 app.use("/tags", tagRoute);
+app.use("/products", productRoute);
 
 /**
  * @swagger

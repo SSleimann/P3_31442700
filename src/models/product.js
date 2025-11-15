@@ -49,10 +49,7 @@ const Product = db.define(
     hooks: {
       beforeValidate: (product) => {
         if (product.name) {
-          const removedHyphensId = product.id
-            ? product.id.replace(/-/g, "")
-            : "";
-          product.slug = slugify(`${product.name}-${removedHyphensId}`, {
+          product.slug = slugify(`${product.name}-${product.id}`, {
             lower: true,
             strict: true,
           });
@@ -60,10 +57,7 @@ const Product = db.define(
       },
       beforeUpdate: (product) => {
         if (product.changed("name")) {
-          const removedHyphensId = product.id
-            ? product.id.replace(/-/g, "")
-            : "";
-          product.slug = slugify(`${product.name}-${removedHyphensId}`, {
+          product.slug = slugify(`${product.name}-${product.id}`, {
             lower: true,
             strict: true,
           });
