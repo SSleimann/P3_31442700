@@ -58,15 +58,16 @@ class QueryBuilder {
       const expressionMatch = regexMatch.exec(key);
       if (!expressionMatch) continue;
 
-      const [, part1, part2, operatorKey] = expressionMatch || [];
+      const [, part1, part2, part3] = expressionMatch || [];
 
       if (
-        !filterFields.has(`${part1}__${operatorKey}`) &&
-        !filterFields.has(`${part1}__${part2}__${operatorKey}`)
+        !filterFields.has(`${part1}__${part2}`) &&
+        !filterFields.has(`${part1}__${part2}__${part3}`)
       ) {
         continue;
       }
 
+      const operatorKey = part3 || part2;
       const operator = operatorsMap[operatorKey];
       const relation = this.relationConfig.find((rel) => rel.as === part1);
       if (relation && part2) {
@@ -77,7 +78,7 @@ class QueryBuilder {
 
         const relObj = relationMap.get(part1);
         this.applyWhere(relObj.where, operator || Op.eq, part2, value);
-      } else if (!relation && !part2) {
+      } else if (!relation && part1 && part2) {
         this.applyWhere(this.options.where, operator || Op.eq, part1, value);
       }
     }
