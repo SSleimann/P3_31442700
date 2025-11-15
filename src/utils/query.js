@@ -1,12 +1,14 @@
-import { Op, fn, col, where } from "sequelize";
+import { Op } from "sequelize";
 
 class QueryBuilder {
-  constructor(model, query) {
+  constructor(model, query, relationConfig = []) {
     this.model = model;
     this.query = query || {};
     this.options = {
       where: {},
+      include: [],
     };
+    this.relationConfig = relationConfig || [];
   }
 
   paginate(maxLimit = 20) {
@@ -19,21 +21,6 @@ class QueryBuilder {
     const offset = (page - 1) * limit;
     this.options.limit = limit;
     this.options.offset = offset;
-    return this;
-  }
-
-  textSearch() {
-    if (this.query.q) {
-      const searchTerm = this.query.q;
-      this.options.where[Op.or] = [
-        where(fn("LOWER", col("name")), {
-          [Op.like]: `%${searchTerm.toLowerCase()}%`,
-        }),
-        where(fn("LOWER", col("description")), {
-          [Op.like]: `%${searchTerm.toLowerCase()}%`,
-        }),
-      ];
-    }
     return this;
   }
 
@@ -58,31 +45,54 @@ class QueryBuilder {
       eq: Op.eq,
       ne: Op.ne,
       like: Op.like,
+      in: Op.in,
     };
     const filterFields = new Set(fields || []);
+    const regexMatch =
+      /^([a-zA-Z0-9]+)(?:__([a-zA-Z0-9]+))?(?:__(gt|gte|lt|lte|eq|ne|like|in))?$/;
+
+    const relationMap = new Map();
 
     for (const key in this.query) {
-      if (!filterFields.has(key)) continue;
       const value = this.query[key];
-      const operatorRegex = /(.*)__(gt|gte|lt|lte|eq|ne|like)$/;
-      const operatorMatch = operatorRegex.exec(key);
+      const expressionMatch = regexMatch.exec(key);
+      if (!expressionMatch) continue;
 
-      if (operatorMatch) {
-        const field = operatorMatch[1];
-        const operator = operatorsMap[operatorMatch[2]];
+      const [, part1, part2, operatorKey] = expressionMatch || [];
 
-        if (!this.options.where[field]) {
-          this.options.where[field] = {};
+      if (
+        !filterFields.has(`${part1}__${operatorKey}`) &&
+        !filterFields.has(`${part1}__${part2}__${operatorKey}`)
+      ) {
+        continue;
+      }
+
+      const operator = operatorsMap[operatorKey];
+      const relation = this.relationConfig.find((rel) => rel.as === part1);
+      if (relation && part2) {
+        if (!this.options.include) this.options.include = [];
+        if (!relationMap.has(part1)) {
+          relationMap.set(part1, { ...relation, where: {} });
         }
 
-        this.options.where[field][operator] =
-          operator === Op.like ? `%${value}%` : value;
-      } else {
-        this.options.where[key] = value;
+        const relObj = relationMap.get(part1);
+        this.applyWhere(relObj.where, operator || Op.eq, part2, value);
+      } else if (!relation && !part2) {
+        this.applyWhere(this.options.where, operator || Op.eq, part1, value);
       }
     }
-    console.log(this.options.where, "asmdkajdpojwqodjwqojwd");
+
+    this.options.include.push(...relationMap.values());
+
     return this;
+  }
+
+  applyWhere(whereObject, operator, field, value) {
+    if (!whereObject[field]) {
+      whereObject[field] = {};
+    }
+
+    whereObject[field][operator] = value;
   }
 
   async exec() {
