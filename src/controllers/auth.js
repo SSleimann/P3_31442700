@@ -1,6 +1,7 @@
-const User = require("../models/user");
-const { hashPassword, checkPassword } = require("../utils/password");
-const jwt = require("jsonwebtoken");
+import User from "../models/user.js";
+import jwt from "jsonwebtoken";
+
+import { hashPassword, checkPassword } from "../utils/password.js";
 
 const registerUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -97,7 +98,4 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = {
-  registerUser,
-  loginUser,
-};
+export { registerUser, loginUser };

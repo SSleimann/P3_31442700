@@ -1,20 +1,31 @@
-const express = require("express");
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./swagger/index");
+import express from "express";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./swagger/index.js";
 
-const db = require("./config/database");
-const userRoute = require("./routes/users");
-const authRoute = require("./routes/auth");
+import db from "./config/database.js";
+import setupAssociations from "./models/associations.js";
+import userRoute from "./routes/users.js";
+import authRoute from "./routes/auth.js";
+import categoryRoute from "./routes/categories.js";
+import tagRoute from "./routes/tags.js";
+import productRoute from "./routes/products.js";
 
-require("dotenv").config();
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
+
+setupAssociations();
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
 
 app.use("/users", userRoute);
 app.use("/auth", authRoute);
+app.use("/categories", categoryRoute);
+app.use("/tags", tagRoute);
+app.use("/products", productRoute);
 
 /**
  * @swagger
@@ -128,4 +139,4 @@ app.get("/health", async (req, res) => {
   }
 });
 
-module.exports = app;
+export default app;

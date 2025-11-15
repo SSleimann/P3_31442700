@@ -1,13 +1,13 @@
-const express = require("express");
-const authenticateToken = require("../middleware/auth");
+import express from "express";
+import authenticateToken from "../middleware/auth.js";
 
-const {
+import {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
-} = require("../controllers/users");
+} from "../controllers/users.js";
 
 const router = express.Router();
 router.use(authenticateToken);
@@ -459,4 +459,4 @@ router.put("/:id", updateUser);
  */
 router.delete("/:id", deleteUser);
 
-module.exports = router;
+export default router;

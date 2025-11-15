@@ -1,11 +1,20 @@
-const request = require("supertest");
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const User = require("../src/models/user");
-const authenticateToken = require("../src/middleware/auth");
+import { vi, describe, it, expect, beforeEach } from "vitest";
+import request from "supertest";
+import express from "express";
+import User from "../src/models/user.js";
+import jwt from "jsonwebtoken";
+import authenticateToken from "../src/middleware/auth.js";
 
-jest.mock("jsonwebtoken");
-jest.mock("../src/models/user");
+vi.mock("jsonwebtoken", () => {
+  const verify = vi.fn();
+  return { verify, default: { verify } };
+});
+
+vi.mock("../src/models/user.js", () => ({
+  default: {
+    findByPk: vi.fn(),
+  },
+}));
 
 const app = express();
 app.use("/protected", authenticateToken, (req, res) => {
@@ -14,7 +23,7 @@ app.use("/protected", authenticateToken, (req, res) => {
 
 describe("authenticateToken middleware", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.mocked(jwt.verify).mockReset();
     process.env.JWT_SECRET = "test-secret";
   });
 
@@ -53,6 +62,7 @@ describe("authenticateToken middleware", () => {
       .set("Authorization", "Bearer valid-token");
 
     expect(response.status).toBe(403);
+
     expect(User.findByPk).toHaveBeenCalledWith("user-id");
   });
 

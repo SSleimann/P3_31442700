@@ -1,6 +1,6 @@
-const User = require("../models/user");
+import User from "../models/user.js";
 
-const { hashPassword } = require("../utils/password");
+import { hashPassword } from "../utils/password.js";
 
 const getUsers = async (req, res) => {
   try {
@@ -202,10 +202,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = {
-  getUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser,
-};
+export { getUsers, getUserById, createUser, updateUser, deleteUser };
