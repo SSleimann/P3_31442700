@@ -12,7 +12,7 @@ const router = Router();
  *     description: Creates a new order with the provided items and processes the payment.
  *     tags: [Orders]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -103,7 +103,7 @@ router.post("/", authenticateToken, createOrder);
  *     description: Retrieve a paginated list of orders for the authenticated user.
  *     tags: [Orders]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: query
  *         name: page
@@ -154,7 +154,7 @@ router.get("/", authenticateToken, getOrders);
  *     description: Retrieve detailed information about a specific order.
  *     tags: [Orders]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

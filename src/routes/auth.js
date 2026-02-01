@@ -1,7 +1,8 @@
 import express from "express";
 const router = express.Router();
 
-import { registerUser, loginUser } from "../controllers/auth.js";
+import { registerUser, loginUser, getMe } from "../controllers/auth.js";
+import authenticateToken from "../middleware/auth.js";
 
 /**
  * @swagger
@@ -171,5 +172,21 @@ router.post("/register", registerUser);
  *                   example: Internal server error
  */
 router.post("/login", loginUser);
+
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Get current logged-in user info
+ *     tags: [Auth]
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Current user data
+ *       401:
+ *         description: Unauthorized
+ */
+router.get("/me", authenticateToken, getMe);
 
 export default router;
