@@ -14,6 +14,12 @@ export class CreditCardStrategy {
 
     const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY;
 
+    // Asegurar que el año tenga 4 dígitos antes de enviarlo a la API externa
+    let formattedYear = String(expirationYear);
+    if (formattedYear.length === 2) {
+      formattedYear = `20${formattedYear}`;
+    }
+
     const response = await fetch("https://fakepayment.onrender.com/payments", {
       method: "POST",
       headers: {
@@ -33,7 +39,7 @@ export class CreditCardStrategy {
         "card-number": String(cardNumber),
         cvv: String(cvv),
         "expiration-month": String(expirationMonth),
-        "expiration-year": String(expirationYear),
+        "expiration-year": formattedYear,
         "full-name": fullName,
         currency,
         description,
@@ -65,4 +71,3 @@ export class PaymentProcessor {
     return this.strategy.processPayment(data);
   }
 }
-

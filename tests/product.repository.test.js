@@ -8,6 +8,7 @@ vi.mock("../src/models/product.js", () => ({
     create: vi.fn(),
     findByPk: vi.fn(),
     findAll: vi.fn(),
+    findAndCountAll: vi.fn(),
   },
 }));
 
@@ -18,6 +19,7 @@ describe("ProductRepository", () => {
     vi.mocked(Product.create).mockReset();
     vi.mocked(Product.findByPk).mockReset();
     vi.mocked(Product.findAll).mockReset();
+    vi.mocked(Product.findAndCountAll).mockReset();
     productRepository = new ProductRepository();
   });
 
@@ -107,9 +109,14 @@ describe("ProductRepository", () => {
       { id: uuidv4(), name: "P1", price: 10 },
       { id: uuidv4(), name: "P2", price: 10 },
     ];
-    Product.findAll.mockResolvedValue(mockProducts);
+    // Como ahora el QueryBuilder usa findAndCountAll cuando hay paginación (que es por defecto en repo)
+    Product.findAndCountAll.mockResolvedValue({
+      count: mockProducts.length,
+      rows: mockProducts,
+    });
 
     const products = await productRepository.filterProducts(criteria, options);
-    expect(products).toEqual(mockProducts);
+    expect(products.results).toEqual(mockProducts);
+    expect(products.total).toBe(mockProducts.length);
   });
 });

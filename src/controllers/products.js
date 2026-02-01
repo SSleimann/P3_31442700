@@ -92,7 +92,7 @@ export const filterProducts = async (req, res) => {
 
   const sanitizedQuery = {};
   for (const key in req.query) {
-    if (validFields.includes(key)) {
+    if (validFields.includes(key) || key === "page" || key === "limit") {
       sanitizedQuery[key] = req.query[key];
     }
   }

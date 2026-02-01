@@ -83,7 +83,7 @@ const loginUser = async (req, res) => {
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
-      }
+      },
     );
     res.status(200).json({
       status: "success",
@@ -98,4 +98,25 @@ const loginUser = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser };
+const getMe = async (req, res) => {
+  try {
+    // req.user ya viene poblado por el middleware authenticateToken como una instancia del modelo User
+    const user = req.user;
+
+    const userJSON = user.toJSON();
+    delete userJSON.password;
+
+    res.status(200).json({
+      status: "success",
+      data: userJSON,
+    });
+  } catch (error) {
+    console.error("Error fetching current user:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
+export { registerUser, loginUser, getMe };

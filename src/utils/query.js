@@ -97,6 +97,22 @@ class QueryBuilder {
   }
 
   async exec() {
+    if (this.options.limit !== undefined) {
+      const { count, rows } = await this.model.findAndCountAll({
+        ...this.options,
+        distinct: true,
+      });
+      const limit = this.options.limit;
+      const totalPages = Math.ceil(count / limit);
+      const page = Math.floor(this.options.offset / limit) + 1;
+
+      return {
+        results: rows,
+        total: count,
+        totalPages,
+        currentPage: page,
+      };
+    }
     return await this.model.findAll(this.options);
   }
 }
